@@ -4,3 +4,6 @@
 [submodule "backend"]
 	path = backend
 	url = https://github.com/HabitPay/backend.git
+[submodule "env"]
+	path = env
+	url = https://github.com/HabitPay/env.git
