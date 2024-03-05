@@ -20,25 +20,25 @@ services:
   #     backend:
   #       condition: service_healthy
 
-  # backend:
-  #   container_name: backend
-  #   build:
-  #     context: ./backend
-  #     dockerfile: Dockerfile
-  #   image: backend
-  #   expose:
-  #     - 3000
-  #   restart: on-failure:3
-  #   networks:
-  #     - front-connection
-  #     - db-connection
-  #   env_file:
-  #     - ./OpenUmbrella-env/.env
-  #   volumes:
-  #     - ./backend/sql_app/.env:/usr/app/sql_app/.env
-  #   depends_on:
-  #     postgres:
-  #       condition: service_healthy
+  backend:
+    container_name: backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    image: backend
+    ports:
+      - 8080:8080
+    restart: on-failure:3
+    networks:
+      - front-connection
+      - db-connection
+    # env_file:
+    #   - ./env/.env
+    volumes:
+      - ./backend:/usr/app
+    depends_on:
+      postgres:
+        condition: service_healthy
 
   postgres:
     container_name: postgres
