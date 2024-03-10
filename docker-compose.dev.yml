@@ -32,8 +32,8 @@ services:
     networks:
       - front-connection
       - db-connection
-    # env_file:
-    #   - ./env/.env
+    env_file:
+      - ./env/.env.backend
     volumes:
       - ./backend:/usr/app
     depends_on:
