@@ -5,13 +5,13 @@ BLUE := "\033[34m"
 NC := "\033[0m"
 
 # COMMANDS
-all: submodule
+all:
 	@echo $(BLUE)🐋 Docker containers are starting... $(NC)
 	@docker compose up --build
 	@echo $(GREEN)✅ Successfully started! $(NC)
 .PHONY: all
 
-dev: stop submodule
+dev: stop
 	@echo $(BLUE)🚧 Development containers are starting... $(NC)
 	@docker compose -f ./docker-compose.dev.yml up --build
 .PHONY: dev
