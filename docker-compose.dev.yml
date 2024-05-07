@@ -34,6 +34,7 @@ services:
       - db-connection
     env_file:
       - ./env/.env.backend
+      - ./env/.env.db.dev
     volumes:
       - ./backend:/usr/app
     depends_on:
@@ -59,7 +60,7 @@ services:
     environment:
       TZ: "Asia/Seoul"
     env_file:
-      - ./env/.env.db
+      - ./env/.env.db.dev
 
   pgadmin:
     container_name: pgadmin
