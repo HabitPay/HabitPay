@@ -33,7 +33,7 @@ services:
       - front-connection
       - db-connection
     env_file:
-      - ./env/.env.backend
+      - ./env/.env.backend.dev
       - ./env/.env.db.dev
     volumes:
       - ./backend:/usr/app
