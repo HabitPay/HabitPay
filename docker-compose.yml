@@ -8,7 +8,7 @@ services:
     networks:
       - backend-connection
     volumes:
-      - ./backend/nginx/blue.conf:/etc/nginx/conf.d/blue.conf
+      - ./backend/nginx/:/etc/nginx/conf.d/
     # TODO: 스프링 헬스체크 추가
     depends_on:
       postgres:
@@ -16,10 +16,16 @@ services:
 
   blue:
     container_name: blue
-    image: backend # TODO: ECR Registry 연결
+    image: backend # TODO: Docker Hub Registry 연결
     ports:
       - $$BLUE_PORT:$$BLUE_PORT
     restart: on-failure:3
+    healthcheck:
+      test: "curl --fail --silent localhost:$$BLUE_PORT/actuator/health | grep UP || exit 1"
+      start_period: 10s
+      interval: 5s
+      timeout: 5s
+      retries: 10
     networks:
       - backend-connection
       - db-connection
@@ -32,10 +38,16 @@ services:
 
   green:
     container_name: green
-    image: backend # TODO: ECR Registry 연결
+    image: backend # TODO: Docker Hub Registry 연결
     ports:
       - $$GREEN_PORT:$$GREEN_PORT
     restart: on-failure:3
+    healthcheck:
+      test: "curl --fail --silent localhost:$$GREEN_PORT/actuator/health | grep UP || exit 1"
+      start_period: 10s
+      interval: 5s
+      timeout: 5s
+      retries: 10
     networks:
       - backend-connection
       - db-connection
@@ -59,7 +71,7 @@ services:
       start_period: 5s
       interval: 5s
       timeout: 5s
-      retries: 55
+      retries: 10
     volumes:
       - postgres-data:/var/lib/postgresql/data
     environment:
