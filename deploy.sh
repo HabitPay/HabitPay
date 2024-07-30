@@ -1,5 +1,6 @@
 #!/bin/bash
 
+DOCKER_IMAGE=$1
 APPLICATION_NAME=backend
 
 IS_APPLICATION_RUNNING=$(sudo docker compose ls | grep $APPLICATION_NAME | grep running | sed 's/.*/true/')
@@ -10,10 +11,9 @@ if [ $IS_APPLICATION_RUNNING = "true" ]; then
     local is_blue_running=$(sudo docker compose -p $APPLICATION ps | grep blue | grep Up | sed 's/.*/true/')
     if [ $is_blue_running = "true" ]; then
         echo "Blue is running. Turning on the green..."
-        cp 
         sudo docker compose -p $APPLICATION-green up -d
 
-        # green healthcheck
+        # TODO: green healthcheck 추가
 
         echo "Green is running. Stopping the blue..."
         sudo docker compose -p $APPLICATION-blue down
