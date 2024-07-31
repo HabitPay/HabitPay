@@ -43,8 +43,8 @@ stop:
 .PHONY: stop
 
 main:
-	cd backend && git switch main
-	cd backend/nginx && git switch main
-	cd frontend && git switch main
-	cd env && git switch main
+	cd backend && git switch main && git pull origin main
+	cd backend/nginx && git switch main && git pull origin main
+	cd frontend && git switch main && git pull origin main
+	cd env && git switch main && git pull origin main
 .PHONY: main
