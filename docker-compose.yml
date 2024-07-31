@@ -9,10 +9,23 @@ services:
       - backend-connection
     volumes:
       - ./backend/nginx/:/etc/nginx/conf.d/
-    # TODO: 스프링 헬스체크 추가
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
     depends_on:
       postgres:
         condition: service_healthy
+      blue:
+        condition: service_healthy
+
+  certbot:
+    image: certbot/certbot:latest
+    command: certonly --webroot --webroot-path=$$WEBROOT_PATH --email $$EMAIL --agree-tos --no-eff-email -d $$DOMAIN
+    env_file:
+      - ./env/.env.certbot
+    volumes:
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+      - ./data/certbot/logs:/var/log/letsencrypt
 
   blue:
     container_name: blue
