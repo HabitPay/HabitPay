@@ -1,28 +1,66 @@
 #!/bin/bash
 
 DOCKER_IMAGE=$1
-APPLICATION_NAME=backend
+APPLICATION=HabitPay
 
-IS_APPLICATION_RUNNING=$(sudo docker compose ls | grep $APPLICATION_NAME | grep running | sed 's/.*/true/')
+healthcheck() {
+    local container=$1
+    local max_retries=10
+    local sleep_time=5
+    local retries=0
 
-if [ $IS_APPLICATION_RUNNING = "true" ]; then
-    echo "Application is running. Starting the application..."
+    while [ $retries -lt $max_retries ]; do
+        local is_container_running=$(docker container inspect $container --format='{{json .State.Status}}' | sed 's/"//g')
+        if [ $is_container_running = "running" ]; then
+            echo "$container is running."
+            return 0
+        else
+            echo "$container is not running. Retrying..."
+            sleep $sleep_time
+            retries=$((retries+1))
+        fi
+    done
 
-    local is_blue_running=$(sudo docker compose -p $APPLICATION ps | grep blue | grep Up | sed 's/.*/true/')
-    if [ $is_blue_running = "true" ]; then
-        echo "Blue is running. Turning on the green..."
-        sudo docker compose -p $APPLICATION-green up -d
+    return 1
+}
 
-        # TODO: green healthcheck 추가
+switch() {
+    local current=$1
+    local target=$2
 
-        echo "Green is running. Stopping the blue..."
-        sudo docker compose -p $APPLICATION-blue down
+    echo "$current is running. Turning on $target container..."
+    sudo docker compose -p $APPLICATION up $target -d
+    local exit_status=$(healthcheck $target)
+
+    if [ $exit_status -eq 0 ]; then
+        echo "$target is running. Stopping $current container..."
+        sudo docker compose -p $APPLICATION stop $current
+        echo "$current container stopped."
+        echo "Complete to switch container. ($current -> $target)"
     else
-        echo "Green is running. Stopping the green..."
-        sudo docker compose -p $APPLICATION-green down
+        echo "Failed to run $target. Exiting..."
+        exit 1
     fi
-    sudo docker compose up -d
-else
-    echo "Application is not running. Starting the application..."
-    sudo docker compose up -d
-fi
+}
+
+main() {
+    local is_application_running=$(sudo docker compose -p $APPLICATION ls | grep running | sed 's/.*/true/')
+
+    if [ $is_application_running = "true" ]; then
+        echo "Application is running. Check the blue container status..."
+        local is_blue_running=$(docker container inspect blue --format='{{json .State.Status}}' | sed 's/"//g')
+        if [ $is_blue_running = "running" ]; then
+            switch blue green
+        else
+            switch green blue
+        fi
+    else
+        echo "Application is not running. Starting the application...(with blue container)"
+        sudo docker compose -p $APPLICATION up postgres -d
+        sudo docker compose -p $APPLICATION up pgadmin -d
+        sudo docker compose -p $APPLICATION up blue -d
+        sudo docker compose -p $APPLICATION up nginx -d
+    fi
+}
+
+main
