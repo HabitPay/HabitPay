@@ -19,7 +19,7 @@ services:
 
   certbot:
     image: certbot/certbot:latest
-    command: certonly --webroot --webroot-path=$$WEBROOT_PATH --email $$EMAIL --agree-tos --no-eff-email -d $$DOMAIN
+    command: certonly --webroot --webroot-path=${WEBROOT_PATH} --email ${EMAIL} --agree-tos --no-eff-email -d ${DOMAIN}
     env_file:
       - ./env/.env.certbot
     volumes:
@@ -31,7 +31,7 @@ services:
     container_name: blue
     image: backend # TODO: Docker Hub Registry 연결
     ports:
-      - $$BLUE_PORT:$$BLUE_PORT
+      - ${BLUE_PORT}:${BLUE_PORT}
     restart: on-failure:3
     healthcheck:
       test: "curl --fail --silent blue/actuator/health | grep UP || exit 1"
@@ -53,7 +53,7 @@ services:
     container_name: green
     image: backend # TODO: Docker Hub Registry 연결
     ports:
-      - $$GREEN_PORT:$$GREEN_PORT
+      - ${GREEN_PORT}:${GREEN_PORT}
     restart: on-failure:3
     healthcheck:
       test: "curl --fail --silent green/actuator/health | grep UP || exit 1"
@@ -76,11 +76,11 @@ services:
     image: postgres:16.2-alpine3.18
     restart: on-failure:3
     expose:
-      - $$POSTGRES_PORT
+      - ${POSTGRES_PORT}
     networks:
       - db-connection
     healthcheck:
-      test: pg_isready -h 127.0.0.1 -d $$POSTGRES_DB -U $$POSTGRES_USER
+      test: pg_isready -h 127.0.0.1 -d ${POSTGRES_DB} -U ${POSTGRES_USER}
       start_period: 5s
       interval: 5s
       timeout: 5s
@@ -97,7 +97,7 @@ services:
     image: dpage/pgadmin4
     restart: on-failure:3
     ports:
-      - $$PGADMIN_PORT:80
+      - ${PGADMIN_PORT}:80
     volumes:
       - pgadmin-data:/var/lib/pgadmin
     env_file:
