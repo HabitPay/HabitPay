@@ -44,6 +44,7 @@ stop:
 
 main:
 	cd backend && git switch main
+	cd backend/nginx && git switch main
 	cd frontend && git switch main
 	cd env && git switch main
 .PHONY: main
