@@ -29,6 +29,7 @@ switch() {
     local target=$2
 
     echo "$current is running. Turning on $target container..."
+    yq -i ".services.$target.image = \"$DOCKER_IMAGE\"" docker-compose.yml
     sudo docker compose -p $APPLICATION up $target -d
     local exit_status=$(healthcheck $target)
 
