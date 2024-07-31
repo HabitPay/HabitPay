@@ -43,7 +43,7 @@ stop:
 .PHONY: stop
 
 main:
-	cd backend && git fetch origin && git switch chore/deploying-dockerfile#217
+	cd backend && git fetch origin && git switch "chore/deploying-dockerfile#217"
 	cd backend/nginx && git switch main
 	cd frontend && git switch main
 	cd env && git switch main
