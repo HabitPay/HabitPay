@@ -45,6 +45,7 @@ switch() {
 }
 
 main() {
+    make main
     local is_application_running=$(sudo docker compose -p $APPLICATION ls | grep running | sed 's/.*/true/')
 
     if [ "$is_application_running" = "true" ]; then
