@@ -49,7 +49,7 @@ services:
       - db-connection
     healthcheck:
       test: pg_isready -h 127.0.0.1 -d $$POSTGRES_DB -U $$POSTGRES_USER
-      start_period: 15s
+      start_period: 25s
       interval: 1m
       timeout: 5s
       retries: 5
