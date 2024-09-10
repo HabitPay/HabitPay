@@ -49,10 +49,10 @@ services:
       - db-connection
     healthcheck:
       test: pg_isready -h 127.0.0.1 -d $$POSTGRES_DB -U $$POSTGRES_USER
-      start_period: 25s
-      interval: 1m
+      start_period: 15s
+      interval: 5s
       timeout: 5s
-      retries: 5
+      retries: 12
     volumes:
       - postgres-data:/var/lib/postgresql/data
     environment:
